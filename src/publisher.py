@@ -12,7 +12,10 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
 sock.bind((UDP_IP, UDP_PORT))
 
 def setup_publisher():
-  rospy.Publisher('chatter', String, queue_size=10)
+  pub = rospy.Publisher('orders', String, queue_size=10)
+
+def publish_message():
+  pub.publish()
 
 def recv_data():
   while not rospy.is_shutdown():
