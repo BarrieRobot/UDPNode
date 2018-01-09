@@ -11,8 +11,10 @@ from std_msgs.msg import Int32
 from std_msgs.msg import UInt32
 from sensor_msgs.msg import Image
 import publisher
+import cv
 from framedata import frame
 import base64
+import numpy
 
 UDP_IP = "127.0.0.1"
 UDP_PORT = 5005
@@ -28,14 +30,16 @@ def states_callback(data):
   sock.sendto(build_state_packet(data.data), (UDP_IP, UDP_PORT))
 
 def rfid_callback(data):
-  rospy.loginfo("I receive height: %s", data.height)
-  rospy.loginfo("I receive encoding: %s", data.encoding)
-  base64EncodedStr = base64.b64encode(data.data)
-  sock.sendto(build_frame_packet(base64EncodedStr), (UDP_IP, UDP_PORT))
+    rospy.loginfo("I receive rfid id: %s", data.data)
+    sock.sendto(build_rfid_packet(data.data), (UDP_IP, UDP_PORT))
 
-def build_frame_packet(framedata):
+def send_stock(column, value):
+    sock.sendto(build_inventory_packet(column, value), (UDP_IP, UDP_PORT))
+
+def build_inventory_packet(column, value):
     data = {}
-    data['frame'] = framedata
+    data['stock'] = column
+    data['value'] = value
     return json.dumps(data)
 
 def build_rfid_packet(rfid_id):
@@ -60,7 +64,7 @@ def setup_subscriber():
   rospy.init_node('udpnode')
   rospy.Subscriber('kinect_touch',Cursor, cursors_callback)
   rospy.Subscriber('states', Int32, states_callback)
-  rospy.Subscriber('/camera/depth/image_raw', Image, rfid_callback)
+  rospy.Subscriber('RFID', Image, rfid_callback)
 
 if __name__=='__main__':
   setup_subscriber()
