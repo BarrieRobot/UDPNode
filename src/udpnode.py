@@ -11,9 +11,6 @@ from std_msgs.msg import Int32
 from std_msgs.msg import UInt32
 from sensor_msgs.msg import Image
 import publisher
-import cv
-from framedata import frame
-import base64
 import numpy
 
 UDP_IP = "127.0.0.1"
@@ -64,7 +61,7 @@ def setup_subscriber():
   rospy.init_node('udpnode')
   rospy.Subscriber('kinect_touch',Cursor, cursors_callback)
   rospy.Subscriber('states', Int32, states_callback)
-  rospy.Subscriber('RFID', Image, rfid_callback)
+  rospy.Subscriber('RFID', UInt32, rfid_callback)
 
 if __name__=='__main__':
   setup_subscriber()
