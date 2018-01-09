@@ -5,7 +5,7 @@ import os
 import json
 import thread
 import udpnode
-from DirectorNode.msg import Order
+from director_node.msg import Order
 from barrieduino.srv import *
 
 UDP_IP = "127.0.0.1"
