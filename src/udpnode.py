@@ -10,6 +10,7 @@ from kt.msg import Cursor
 from std_msgs.msg import Int32
 from std_msgs.msg import UInt32
 from sensor_msgs.msg import Image
+from director_node.msg import Order
 import publisher
 import numpy
 
@@ -30,8 +31,18 @@ def rfid_callback(data):
     rospy.loginfo("I receive rfid id: %s", data.data)
     sock.sendto(build_rfid_packet(data.data), (UDP_IP, UDP_PORT))
 
+def order_finished_callback(data):
+    if (data.order_type == 255):
+        rospy.loginfo("I receive order is finished")
+        sock.sendto(build_ordercomplete_packet(), (UDP_IP, UDP_PORT))
+
 def send_stock(column, value):
     sock.sendto(build_inventory_packet(column, value), (UDP_IP, UDP_PORT))
+
+def build_ordercomplete_packet():
+    data = {}
+    data['order'] = True
+    return json.dumps(data)
 
 def build_inventory_packet(column, value):
     data = {}
@@ -62,6 +73,7 @@ def setup_subscriber():
   rospy.Subscriber('kinect_touch',Cursor, cursors_callback)
   rospy.Subscriber('states', Int32, states_callback)
   rospy.Subscriber('RFID', UInt32, rfid_callback)
+  rospy.Subscriber('finishedOrders', Order, order_finished_callback)
 
 if __name__=='__main__':
   setup_subscriber()

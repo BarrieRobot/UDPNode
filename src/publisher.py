@@ -22,10 +22,9 @@ def publish_message(message):
   pub.publish(message)
 
 def handle_msg(msg):
-  if msg.split(':')[0] == 'order':
-      print Order(msg.split(':')[1])
-      publish_message(Order(msg.split(':')[1]))
-  elif msg.split(':')[0] == 'stock':
+  if 'order' in msg:
+      publish_message(Order(int(data.split(':')[1].strip())))
+  elif 'stock' in msg and False:
       column = msg.split(':')[1]
       stock = get_stock(column) # TODO right stock (add parameter to srv call)
       udpnode.send_stock(column, stock)
@@ -42,7 +41,8 @@ def get_stock(column):
 def recv_data():
   while not rospy.is_shutdown():
     data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
-    print "received message:", data
+    print "received message (udp): ", data
+    handle_msg(data)
 
 def start():
   setup_publisher();
