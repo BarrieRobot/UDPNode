@@ -23,7 +23,7 @@ def publish_message(message):
 
 def handle_msg(msg):
   if 'order' in msg:
-      publish_message(Order(int(data.split(':')[1].strip())))
+      publish_message(Order(int(msg.split(':')[1].strip())))
   elif 'stock' in msg and False:
       column = msg.split(':')[1]
       stock = get_stock(column) # TODO right stock (add parameter to srv call)
